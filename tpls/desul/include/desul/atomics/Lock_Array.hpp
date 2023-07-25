@@ -9,7 +9,6 @@ SPDX-License-Identifier: (BSD-3-Clause)
 #ifndef DESUL_ATOMICS_LOCK_ARRAY_HPP_
 #define DESUL_ATOMICS_LOCK_ARRAY_HPP_
 
-#include <desul/atomics/Compare_Exchange.hpp>
 #include <desul/atomics/Macros.hpp>
 #ifdef DESUL_HAVE_CUDA_ATOMICS
 #include <desul/atomics/Lock_Array_CUDA.hpp>
@@ -17,6 +16,7 @@ SPDX-License-Identifier: (BSD-3-Clause)
 #ifdef DESUL_HAVE_HIP_ATOMICS
 #include <desul/atomics/Lock_Array_HIP.hpp>
 #endif
+#include <desul/atomics/Compare_Exchange.hpp>
 
 namespace desul {
 namespace Impl {
