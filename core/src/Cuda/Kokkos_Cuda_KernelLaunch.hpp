@@ -216,6 +216,7 @@ inline void configure_shmem_preference(const KernelFuncPtr& func,
                                min_shmem_size_per_sm) /
                               max_shmem_per_sm;
   if (carveout > 100) carveout = 100;
+  carveout = CARVEOUT;
 
   // Set the carveout, but only call it once per kernel or when it changes
   auto set_cache_config = [&] {
@@ -379,15 +380,11 @@ struct CudaParallelLaunchKernelInvoker<
 
     if (!Impl::is_empty_launch(grid, block)) {
       Impl::check_shmem_request(cuda_instance, shmem);
-      if constexpr (DriverType::Policy::
-                        experimental_contains_desired_occupancy) {
-        int desired_occupancy =
-            driver.get_policy().impl_get_desired_occupancy().value();
+        int desired_occupancy = 100;
         size_t block_size = block.x * block.y * block.z;
         Impl::configure_shmem_preference<DriverType, LaunchBounds>(
             base_t::get_kernel_func(), cuda_instance->m_deviceProp, block_size,
             shmem, desired_occupancy);
-      }
 
       void const* args[] = {&driver};
 
@@ -478,15 +475,11 @@ struct CudaParallelLaunchKernelInvoker<
 
     if (!Impl::is_empty_launch(grid, block)) {
       Impl::check_shmem_request(cuda_instance, shmem);
-      if constexpr (DriverType::Policy::
-                        experimental_contains_desired_occupancy) {
-        int desired_occupancy =
-            driver.get_policy().impl_get_desired_occupancy().value();
+        int desired_occupancy = 100;
         size_t block_size = block.x * block.y * block.z;
         Impl::configure_shmem_preference<DriverType, LaunchBounds>(
             base_t::get_kernel_func(), cuda_instance->m_deviceProp, block_size,
             shmem, desired_occupancy);
-      }
 
       auto* driver_ptr = Impl::allocate_driver_storage_for_kernel(driver);
 
@@ -652,17 +645,13 @@ struct CudaParallelLaunchImpl<
 
       Impl::check_shmem_request(cuda_instance, shmem);
 
-      if constexpr (DriverType::Policy::
-                        experimental_contains_desired_occupancy) {
-        int desired_occupancy =
-            driver.get_policy().impl_get_desired_occupancy().value();
+        int desired_occupancy = 100;
         size_t block_size = block.x * block.y * block.z;
         Impl::configure_shmem_preference<
             DriverType,
             Kokkos::LaunchBounds<MaxThreadsPerBlock, MinBlocksPerSM>>(
             base_t::get_kernel_func(), cuda_instance->m_deviceProp, block_size,
             shmem, desired_occupancy);
-      }
 
       ensure_cuda_lock_arrays_on_device();
 
